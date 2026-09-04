@@ -24,9 +24,11 @@ const gameSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 2
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
-}, {
-  timestamps: { createdAt: true, updatedAt: false }
 });
 
 export default mongoose.model('Game', gameSchema);

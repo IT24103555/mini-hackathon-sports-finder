@@ -15,6 +15,12 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { title, sport, location, time, maxPlayers } = req.body;
+    if (!title?.trim() || !sport || !location?.trim() || !time || maxPlayers === undefined || maxPlayers === null || maxPlayers === '') {
+      return res.status(400).json({ message: 'Title, sport, location, time, and maxPlayers are required.' });
+    }
+    if (Number(maxPlayers) < 2) {
+      return res.status(400).json({ message: 'maxPlayers must be at least 2.' });
+    }
     const game = await Game.create({ title, sport, location, time, maxPlayers });
     res.status(201).json(game);
   } catch (error) {
