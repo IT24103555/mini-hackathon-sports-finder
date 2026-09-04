@@ -15,11 +15,11 @@ const adminUsername = process.env.ADMIN_USERNAME || 'admin123';
 const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
 
 const sampleGames = [
-  { title: 'Sunday Evening Cricket', sport: 'Cricket', location: 'Colombo 7', time: '5:00 PM', maxPlayers: 11 },
-  { title: 'Morning Football', sport: 'Football', location: 'Negombo Beach', time: '7:00 AM', maxPlayers: 10 },
-  { title: 'Volleyball at Galle Face', sport: 'Volleyball', location: 'Galle Face', time: '4:00 PM', maxPlayers: 6 },
-  { title: 'Night Cricket', sport: 'Cricket', location: 'Kandy Stadium', time: '8:00 PM', maxPlayers: 11 },
-  { title: 'Weekend Football', sport: 'Football', location: 'Jaffna Ground', time: '3:00 PM', maxPlayers: 12 }
+  { title: 'Sunday Evening Cricket', sport: 'Cricket', location: 'Colombo 7', time: '5:00 PM', maxPlayers: 11, status: 'approved' },
+  { title: 'Morning Football', sport: 'Football', location: 'Negombo Beach', time: '7:00 AM', maxPlayers: 10, status: 'approved' },
+  { title: 'Volleyball at Galle Face', sport: 'Volleyball', location: 'Galle Face', time: '4:00 PM', maxPlayers: 6, status: 'approved' },
+  { title: 'Night Cricket', sport: 'Cricket', location: 'Kandy Stadium', time: '8:00 PM', maxPlayers: 11, status: 'approved' },
+  { title: 'Weekend Football', sport: 'Football', location: 'Jaffna Ground', time: '3:00 PM', maxPlayers: 12, status: 'approved' }
 ];
 
 app.use(cors());
@@ -34,6 +34,7 @@ async function seedGames() {
     await Game.insertMany(sampleGames);
     console.log('Added sample Sri Lankan games.');
   }
+  await Game.updateMany({ status: { $exists: false } }, { $set: { status: 'approved' } });
 }
 
 async function seedAdmin() {

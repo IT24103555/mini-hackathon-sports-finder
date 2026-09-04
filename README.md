@@ -17,6 +17,7 @@ Sports Finder provides one simple place to discover open local games or create a
 - Create a game with a title, location, time, and maximum player count
 - Client-side and server-side validation
 - Seed sample games when the database is empty
+- Moderate sports events before public listing
 - Username/password registration and login with user and administrator roles
 - Administrator user management
 
@@ -77,6 +78,8 @@ npm run dev
 The client uses `http://localhost:5000` by default. Set `VITE_API_URL` in `client/.env` when the API is deployed elsewhere.
 
 The administrator account is created on server startup using the defaults above or the optional `ADMIN_USERNAME` and `ADMIN_PASSWORD` overrides. Registration and login intentionally use only a username and password; there is no email-based account flow.
+
+New events are saved as `pending` and are hidden from the public feed until an administrator approves them. Administrators can review all events at `GET /api/games/moderation`, update their status with `PATCH /api/games/:id/status`, or delete them with `DELETE /api/games/:id`. User roles can be updated with `PATCH /api/users/:id/role`; the root `admin123` account cannot be modified or deleted.
 
 ## Deployment
 

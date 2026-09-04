@@ -10,9 +10,25 @@ router.get('/', async (req, res) => {
   res.json(users);
 });
 
+router.patch('/:id/role', async (req, res) => {
+  const { role } = req.body;
+  if (!['user', 'admin'].includes(role)) return res.status(400).json({ message: 'Role must be user or admin.' });
+
+  const user = await User.findById(req.params.id);
+  if (!user) return res.status(404).json({ message: 'User not found.' });
+  if (user.username === 'admin123') return res.status(403).json({ message: 'The root administrator cannot be modified.' });
+
+  user.role = role;
+  await user.save();
+  res.json({ id: user._id, username: user.username, role: user.role, createdAt: user.createdAt });
+});
+
 router.delete('/:id', async (req, res) => {
   if (req.params.id === req.user.id) return res.status(400).json({ message: 'You cannot delete your own administrator account.' });
-  await User.findByIdAndDelete(req.params.id);
+  const user = await User.findById(req.params.id);
+  if (!user) return res.status(404).json({ message: 'User not found.' });
+  if (user.username === 'admin123') return res.status(403).json({ message: 'The root administrator cannot be deleted.' });
+  await user.deleteOne();
   res.status(204).end();
 });
 
