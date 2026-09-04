@@ -6,6 +6,12 @@ const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const maxTitleLength = 80;
 const maxLocationLength = 120;
 
+function getMinimumDateTime() {
+  const now = new Date();
+  const pad = (value) => String(value).padStart(2, '0');
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
+
 function GameForm({ onCreated, onCancel }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
@@ -72,7 +78,7 @@ function GameForm({ onCreated, onCancel }) {
         </div>
         <label>Location<input name="location" value={form.location} onChange={handleChange} maxLength={maxLocationLength} required placeholder="e.g. Viharamahadevi Park, Colombo" />{errors.location && <small>{errors.location}</small>}</label>
         <div className="form-row">
-          <label>Date and time<input type="datetime-local" name="time" value={form.time} onChange={handleChange} required />{errors.time && <small>{errors.time}</small>}</label>
+          <label>Date and time<input type="datetime-local" name="time" value={form.time} min={getMinimumDateTime()} onChange={handleChange} required />{errors.time && <small>{errors.time}</small>}</label>
           <label>Maximum players<input type="number" name="maxPlayers" value={form.maxPlayers} onChange={handleChange} min="2" max="50" step="1" required placeholder="10" />{errors.maxPlayers && <small>{errors.maxPlayers}</small>}</label>
         </div>
         {submitError && <p className="form-submit-error">{submitError}</p>}
