@@ -1,48 +1,29 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import Navbar from './components/Navbar.jsx';
+import { useState } from 'react';
 import GameList from './components/GameList.jsx';
 import GameForm from './components/GameForm.jsx';
-
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import Navbar from './components/Navbar.jsx';
 
 function App() {
   const [view, setView] = useState('list');
-  const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  async function loadGames() {
-    setLoading(true);
-    setError('');
-    try {
-      const { data } = await axios.get(`${apiUrl}/api/games`);
-      setGames(data);
-    } catch {
-      setError('Games are taking a breather. Check that the backend is running and try again.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadGames();
-  }, []);
-
-  async function handleCreated() {
+  function handleGameAdded() {
     setView('list');
-    await loadGames();
+    setRefreshKey((currentKey) => currentKey + 1);
   }
 
   return (
-    <div className="app">
-      <Navbar view={view} onNavigate={setView} />
-      {view === 'list'
-        ? <GameList games={games} loading={loading} error={error} onCreate={() => setView('form')} />
-        : <GameForm onCreated={handleCreated} onCancel={() => setView('list')} />}
-      <footer>Made for the local game, wherever you are in Sri Lanka.</footer>
+    <div className="app-container">
+      <Navbar setView={setView} />
+      <main>
+        {view === 'list' && <GameList key={refreshKey} onCreate={() => setView('form')} />}
+        {view === 'form' && <GameForm onGameAdded={handleGameAdded} onCancel={() => setView('list')} />}
+      </main>
     </div>
   );
 }
 
+// Deployment: replace http://localhost:5000 with the live Render URL in Member 2
+// and Member 3's axios calls before deploying the client.
+// Run npm run build in /client, then deploy the dist/ folder to Vercel or Netlify.
 export default App;

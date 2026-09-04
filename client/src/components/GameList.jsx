@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
 
 const sportIcons = { Cricket: '🏏', Football: '⚽', Volleyball: '🏐' };
 
@@ -8,8 +9,31 @@ function formatGameTime(value) {
   }).format(new Date(value));
 }
 
-function GameList({ games, loading, error, onCreate }) {
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+function GameList({ onCreate }) {
   const [sportFilter, setSportFilter] = useState('All sports');
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    async function loadGames() {
+      setLoading(true);
+      setError('');
+      try {
+        const { data } = await axios.get(`${apiUrl}/api/games`);
+        setGames(data);
+      } catch {
+        setError('Games are taking a breather. Check that the backend is running and try again.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadGames();
+  }, []);
+
   const filteredGames = useMemo(() => sportFilter === 'All sports'
     ? games
     : games.filter((game) => game.sport === sportFilter), [games, sportFilter]);

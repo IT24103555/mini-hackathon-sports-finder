@@ -1,87 +1,79 @@
 # Sports Finder
 
-Sports Finder is a simple MERN web application for helping people in Sri Lanka discover casual cricket, football, and volleyball games nearby.
+Sports Finder is a MERN application that helps Sri Lankans find casual sports games nearby.
 
 ## Selected Problem
 
-People who want to play casual sports often struggle to find nearby games and enough players without relying on scattered social media groups.
+Sri Lankans cannot easily find casual games because invitations are scattered across social media groups and personal networks.
 
 ## Proposed Solution
 
-Sports Finder gives local players one simple place to discover open games or create an invitation for their area.
+Sports Finder provides one simple place to discover open local games or create an invitation for other players.
 
 ## Main Features
 
-- Browse casual games in Sri Lanka
-- Filter games by cricket, football, or volleyball
-- Create a game with title, location, time, and player limit
-- Friendly client-side and server-side validation
-- Sample games seeded automatically for a new database
+- Browse casual cricket, football, and volleyball games
+- Filter games by sport
+- Create a game with a title, location, time, and maximum player count
+- Client-side and server-side validation
+- Seed sample games when the database is empty
 
-## Technologies Used
+## Technologies
 
 - MongoDB and Mongoose
-- Node.js, Express, CORS, and dotenv
+- Express and Node.js
 - React, Vite, and Axios
+- CORS and dotenv
 
-## Project Structure
+## AI Tools Used
 
-- `server/` - Express API, Mongoose model, routes, and seed data
-- `client/` - React and Vite user interface
-
-## Requirements
-
-- Node.js 18 or newer
-- A MongoDB Atlas cluster or local MongoDB installation
-
-## Setup
-
-1. Configure the server:
-
-   ```bash
-   cd server
-   npm install
-   ```
-
-   Open `server/.env` and replace `your_mongodb_uri` with your MongoDB connection string. The default port is `5000`.
-
-2. Start the API:
-
-   ```bash
-   npm run dev
-   ```
-
-   On the first successful connection, six sample Sri Lankan games are inserted when the database has no games.
-
-3. In a second terminal, configure and start the client:
-
-   ```bash
-   cd client
-   npm install
-   npm run dev
-   ```
-
-4. Open the local URL printed by Vite, usually `http://localhost:5173`.
-
-The client expects the API at `http://localhost:5000`. Change `VITE_API_URL` if your backend uses another address.
+AI tools were used for project scaffolding, code suggestions, debugging support, and documentation. The team reviewed and adapted all generated content.
 
 ## Team Contributions
 
-- Member 1: Backend API, database model, and seed data
-- Member 2: React interface and responsive styling
-- Member 3: Testing, documentation, and deployment
+| Team member | ID | Role and contribution |
+| --- | --- | --- |
+| Member 1: [Name] | [ID] | Backend API, database model, and seed data |
+| Member 2: [Name] | [ID] | React interface and responsive styling |
+| Member 3: [Name] | [ID] | Testing, documentation, and deployment |
 
-Replace these placeholders with your team's names and specific contributions.
+## Installation
 
-## Demonstration Video
+### Server
 
-`[Add demonstration video URL]`
+```bash
+cd server
+npm install
+```
 
-## Deployed Links
+Create `server/.env` and set the MongoDB connection string:
 
-- Frontend: `[Add deployed frontend URL]`
-- Backend API: `[Add deployed backend URL]`
+```env
+MONGODB_URI=your_mongodb_connection_string
+PORT=5000
+```
 
-## AI Tool Declaration
+Start the API:
 
-AI tools were used to assist with project scaffolding, code suggestions, and documentation. The team reviewed, tested, and adapted the generated code.
+```bash
+npm run dev
+```
+
+### Client
+
+In a second terminal:
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+The client uses `http://localhost:5000` by default. Set `VITE_API_URL` in `client/.env` when the API is deployed elsewhere.
+
+## Deployment
+
+Before deployment, run `npm run build` in `/client` and deploy the generated `dist/` folder to Vercel or Netlify. Replace the local API URL in the axios calls with the live Render URL.
+
+- Deployed application: [Add deployed application URL]
+- Demo video: [Add demo video URL]

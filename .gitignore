@@ -4,3 +4,15 @@ dist/
 .env.*
 !.env.example
 npm-debug.log*
+*.log
+
+coverage/
+.nyc_output/
+.DS_Store
+Thumbs.db
+
+.cache/
+.vite/
+.eslintcache
+
+.vscode/

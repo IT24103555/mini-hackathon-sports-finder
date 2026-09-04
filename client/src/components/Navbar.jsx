@@ -1,21 +1,12 @@
-function Navbar({ view, onNavigate }) {
+function Navbar({ setView }) {
   return (
-    <header className="navbar">
-      <div className="nav-inner">
-        <button className="brand" onClick={() => onNavigate('list')} aria-label="Go to home">
-          <span className="brand-mark">SF</span>
-          <span>Sports Finder</span>
-        </button>
-        <nav aria-label="Main navigation">
-          <button className={view === 'list' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('list')}>
-            Explore games
-          </button>
-          <button className={view === 'form' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('form')}>
-            Create a game
-          </button>
-        </nav>
+    <nav className="navbar" aria-label="Main navigation">
+      <h1>⚽ Sports Finder</h1>
+      <div className="nav-buttons">
+        <button type="button" onClick={() => setView('list')}>Home</button>
+        <button type="button" onClick={() => setView('form')}>+ Create Game</button>
       </div>
-    </header>
+    </nav>
   );
 }
 
