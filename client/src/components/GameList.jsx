@@ -83,7 +83,7 @@ function JoinGameButton({ game, session, onLogin, onJoined }) {
   </>;
 }
 
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const apiUrl = import.meta.env.VITE_API_URL || 'https://mini-hackathon-sports-finder-production.up.railway.app';
 
 function GameList({ onCreate, session, onLogin }) {
   const [sportFilter, setSportFilter] = useState('All sports');
