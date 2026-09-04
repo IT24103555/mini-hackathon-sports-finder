@@ -35,25 +35,66 @@ function EventTiming({ game }) {
   return <div className="event-timing"><strong>{formatCountdown(deadlineTime - now)}</strong><span>Registration closes</span></div>;
 }
 
-function RegisterButton({ deadlineTime }) {
+function RegisterButton({ game, session, onLogin, onRegistered }) {
   const [now, setNow] = useState(Date.now());
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const deadline = deadlineTime ? new Date(deadlineTime).getTime() : Number.NaN;
-  return <button className="register-button" type="button" disabled={Number.isNaN(deadline) || now >= deadline}>Register</button>;
+  const deadline = game.deadlineTime ? new Date(game.deadlineTime).getTime() : Number.NaN;
+  const registrationCount = game.registeredPlayers?.length || 0;
+  const isRegistered = Boolean(session?.user.id && game.registeredPlayers?.some((player) => String(player) === String(session.user.id)));
+  const isClosed = Number.isNaN(deadline) || now >= deadline;
+  const isFull = registrationCount >= game.maxPlayers;
+
+  async function handleRegister() {
+    if (!session) {
+      onLogin();
+      return;
+    }
+    if (isRegistered) return;
+    setSubmitting(true);
+    setMessage('');
+    try {
+      const { data } = await axios.post(`${apiUrl}/api/games/${game._id}/register`, {}, {
+        headers: { Authorization: `Bearer ${session.token}` }
+      });
+      setMessage(data.message);
+      onRegistered();
+    } catch (error) {
+      if (error.response?.status === 401) onLogin();
+      else setMessage(error.response?.data?.message || 'Unable to register right now.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return <>
+    <button className="register-button" type="button" onClick={handleRegister} disabled={submitting || isRegistered || isClosed || isFull}>
+      {submitting ? 'Registering...' : isRegistered ? 'Registered' : isFull ? 'Game full' : isClosed ? 'Registration closed' : 'Register'}
+    </button>
+    {message && <small className="registration-message" role="status">{message}</small>}
+  </>;
 }
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-function GameList({ onCreate }) {
+function GameList({ onCreate, session, onLogin }) {
   const [sportFilter, setSportFilter] = useState('All sports');
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  function handleRegistered(gameId) {
+    setGames((currentGames) => currentGames.map((game) => game._id === gameId ? {
+      ...game,
+      registeredPlayers: [...(game.registeredPlayers || []), session.user.id]
+    } : game));
+  }
 
   useEffect(() => {
     async function loadGames() {
@@ -121,7 +162,12 @@ function GameList({ onCreate }) {
                 <p className="game-detail"><span aria-hidden="true">⌖</span>{game.location}</p>
                 <p className="game-detail"><span aria-hidden="true">◷</span>{formatGameTime(game.startTime || game.time)}</p>
                 <EventTiming game={game} />
-                <RegisterButton deadlineTime={game.deadlineTime} />
+                <RegisterButton
+                  game={game}
+                  session={session}
+                  onLogin={onLogin}
+                  onRegistered={() => handleRegistered(game._id)}
+                />
               </div>
             </article>
           ))}

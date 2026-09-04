@@ -32,6 +32,10 @@ const gameSchema = new mongoose.Schema({
     required: true,
     min: 2
   },
+  registeredPlayers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
