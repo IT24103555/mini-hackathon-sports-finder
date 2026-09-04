@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Maximum players must be a whole number from 2 to 50.' });
     }
 
-    const game = await Game.create({ title, sport, location, time, maxPlayers });
+    const game = await Game.create({ title: title.trim(), sport, location: location.trim(), time: parsedTime, maxPlayers: parsedPlayers });
     res.status(201).json(game);
   } catch (error) {
     const message = error.name === 'ValidationError'
