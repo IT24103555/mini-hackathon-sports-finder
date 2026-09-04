@@ -40,9 +40,9 @@ export const gameSchema = Joi.object({
     'date.format': 'Start time must be a valid ISO datetime.',
     'date.base': 'Start time must be a valid datetime.'
   }),
-  deadlineTime: Joi.date().iso().required().messages({
-    'date.format': 'Deadline must be a valid ISO datetime.',
-    'date.base': 'Deadline must be a valid datetime.'
+  endTime: Joi.date().iso().required().messages({
+    'date.format': 'End time must be a valid ISO datetime.',
+    'date.base': 'End time must be a valid datetime.'
   }),
   maxPlayers: Joi.number().integer().min(2).max(100).required().messages({
     'number.base': 'Maximum players must be a whole number.',

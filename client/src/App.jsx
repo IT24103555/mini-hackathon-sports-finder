@@ -29,7 +29,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <Navbar setView={setView} session={session} onLogout={handleLogout} />
+      <Navbar setView={setView} view={view} session={session} onLogout={handleLogout} />
       <main>
         {view === 'list' && <GameList key={refreshKey} session={session} onLogin={() => setView('login')} onCreate={() => session ? setView('form') : setView('login')} />}
         {view === 'form' && session && <GameForm token={session.token} onGameAdded={handleGameAdded} onCancel={() => setView('list')} />}

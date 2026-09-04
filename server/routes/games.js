@@ -27,17 +27,14 @@ router.post('/', requireAuth, async (req, res) => {
   try {
     const values = validateRequest(gameSchema, req, res);
     if (!values) return;
-    const { title, sport, location, startTime, deadlineTime, maxPlayers } = values;
-    if (deadlineTime <= new Date()) {
-      return res.status(400).json({ message: 'Please choose a registration deadline in the future.', errors: { deadlineTime: 'Deadline cannot be in the past.' } });
-    }
+    const { title, sport, location, startTime, endTime, maxPlayers } = values;
     if (startTime <= new Date()) {
       return res.status(400).json({ message: 'Please choose a start time in the future.', errors: { startTime: 'Start time cannot be in the past.' } });
     }
-    if (deadlineTime >= startTime) {
-      return res.status(400).json({ message: 'Registration deadline must be earlier than the start time.', errors: { deadlineTime: 'Deadline must be earlier than the start time.' } });
+    if (endTime <= startTime) {
+      return res.status(400).json({ message: 'End time must be later than the start time.', errors: { endTime: 'End time must be later than the start time.' } });
     }
-    const game = await Game.create({ title, sport, location, startTime, deadlineTime, maxPlayers, createdBy: req.user.id, status: 'pending' });
+    const game = await Game.create({ title, sport, location, startTime, endTime, maxPlayers, createdBy: req.user.id, status: 'pending' });
     res.status(201).json(game);
   } catch (error) {
     const message = error.name === 'ValidationError'
@@ -53,7 +50,7 @@ router.post('/:id/register', requireAuth, async (req, res) => {
       {
         _id: req.params.id,
         status: 'approved',
-        deadlineTime: { $gt: new Date() },
+        startTime: { $gt: new Date() },
         $expr: { $lt: [{ $size: { $ifNull: ['$registeredPlayers', []] } }, '$maxPlayers'] },
         registeredPlayers: { $ne: req.user.id }
       },
@@ -68,13 +65,13 @@ router.post('/:id/register', requireAuth, async (req, res) => {
       });
     }
 
-    const existingGame = await Game.findById(req.params.id).select('status deadlineTime maxPlayers registeredPlayers startTime');
+    const existingGame = await Game.findById(req.params.id).select('status startTime endTime maxPlayers registeredPlayers');
     if (!existingGame) return res.status(404).json({ message: 'Game not found.' });
     if (existingGame.registeredPlayers?.some((player) => player.toString() === req.user.id)) {
       return res.status(409).json({ message: 'You are already registered for this game.' });
     }
     if (existingGame.status !== 'approved') return res.status(400).json({ message: 'This game is not open for registration.' });
-    if (new Date() > existingGame.deadlineTime) return res.status(400).json({ message: 'Registration for this game has closed.' });
+    if (new Date() >= existingGame.startTime) return res.status(400).json({ message: 'This game has already started.' });
     if ((existingGame.registeredPlayers?.length || 0) >= existingGame.maxPlayers) {
       return res.status(400).json({ message: 'This game has reached its maximum capacity.' });
     }

@@ -20,38 +20,40 @@ function formatCountdown(milliseconds) {
 }
 
 function EventTiming({ game }) {
-  const [now, setNow] = useState(Date.now());
-  const startTime = new Date(game.startTime || game.time).getTime();
-  const deadlineTime = game.deadlineTime ? new Date(game.deadlineTime).getTime() : startTime;
+  const [now, setNow] = useState(() => new Date().getTime());
+  const startTime = game.startTime ? new Date(game.startTime).getTime() : Number.NaN;
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
+    const timer = setInterval(() => setNow(new Date().getTime()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  if (Number.isNaN(startTime) || Number.isNaN(deadlineTime)) return <div className="event-timing">Event time unavailable</div>;
-  if (now >= startTime) return <div className="event-timing ongoing">Ongoing</div>;
-  if (now >= deadlineTime) return <div className="event-timing closed">Registration Closed</div>;
-  return <div className="event-timing"><strong>{formatCountdown(deadlineTime - now)}</strong><span>Registration closes</span></div>;
+  if (Number.isNaN(startTime)) return <div className="event-timing"><span className="status-dot" />Event time unavailable</div>;
+  const timeLeft = startTime - now;
+  if (timeLeft <= 0) return <div className="event-timing closed"><span className="status-dot" />Event started</div>;
+  return <div className="event-timing"><strong>{formatCountdown(timeLeft)}</strong><span>Event starts</span></div>;
 }
 
-function RegisterButton({ game, session, onLogin, onRegistered }) {
-  const [now, setNow] = useState(Date.now());
+function JoinGameButton({ game, session, onLogin, onJoined }) {
+  const [now, setNow] = useState(() => new Date().getTime());
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
+    const timer = setInterval(() => setNow(new Date().getTime()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const deadline = game.deadlineTime ? new Date(game.deadlineTime).getTime() : Number.NaN;
+  const startTime = game.startTime ? new Date(game.startTime).getTime() : Number.NaN;
   const registrationCount = game.registeredPlayers?.length || 0;
   const isRegistered = Boolean(session?.user.id && game.registeredPlayers?.some((player) => String(player) === String(session.user.id)));
-  const isClosed = Number.isNaN(deadline) || now >= deadline;
+  const timeLeft = startTime - now;
+  const isOpen = !Number.isNaN(startTime) && timeLeft > 0;
+  const isStarted = !Number.isNaN(startTime) && timeLeft <= 0;
+  const isUnavailable = Number.isNaN(startTime);
   const isFull = registrationCount >= game.maxPlayers;
 
-  async function handleRegister() {
+  async function handleJoinGame() {
     if (!session) {
       onLogin();
       return;
@@ -64,19 +66,19 @@ function RegisterButton({ game, session, onLogin, onRegistered }) {
         headers: { Authorization: `Bearer ${session.token}` }
       });
       setMessage(data.message);
-      onRegistered();
+      onJoined();
     } catch (error) {
       if (error.response?.status === 401) onLogin();
-      else setMessage(error.response?.data?.message || 'Unable to register right now.');
+      else setMessage(error.response?.data?.message || 'Unable to join this game right now.');
     } finally {
       setSubmitting(false);
     }
   }
 
   return <>
-    <button className="register-button" type="button" onClick={handleRegister} disabled={submitting || isRegistered || isClosed || isFull}>
-      {submitting ? 'Registering...' : isRegistered ? 'Registered' : isFull ? 'Game full' : isClosed ? 'Registration closed' : 'Register'}
-    </button>
+    {isStarted ? <span className="register-button status-badge" role="status">Event started</span> : isUnavailable ? <span className="register-button status-badge" role="status">Event time unavailable</span> : <button className="register-button" type="button" onClick={handleJoinGame} disabled={submitting || isRegistered || isFull}>
+      {submitting ? 'Joining...' : isRegistered ? 'Joined' : isFull ? 'Game full' : isOpen ? 'Join Game' : 'Event time unavailable'}
+    </button>}
     {message && <small className="registration-message" role="status">{message}</small>}
   </>;
 }
@@ -89,7 +91,7 @@ function GameList({ onCreate, session, onLogin }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  function handleRegistered(gameId) {
+  function handleJoined(gameId) {
     setGames((currentGames) => currentGames.map((game) => game._id === gameId ? {
       ...game,
       registeredPlayers: [...(game.registeredPlayers || []), session.user.id]
@@ -138,15 +140,22 @@ function GameList({ onCreate, session, onLogin }) {
             <p className="eyebrow">Open invitations</p>
             <h2 id="games-heading">Games happening soon</h2>
           </div>
-          <label className="filter-control">
+          <div className="filter-control">
             <span>Filter by sport</span>
-            <select value={sportFilter} onChange={(event) => setSportFilter(event.target.value)}>
-              <option>All sports</option>
-              <option>Cricket</option>
-              <option>Football</option>
-              <option>Volleyball</option>
-            </select>
-          </label>
+            <div className="sport-filters" role="group" aria-label="Filter games by sport">
+              {['All sports', 'Cricket', 'Football', 'Volleyball'].map((sport) => (
+                <button
+                  className={sportFilter === sport ? 'filter-pill active' : 'filter-pill'}
+                  type="button"
+                  aria-pressed={sportFilter === sport}
+                  key={sport}
+                  onClick={() => setSportFilter(sport)}
+                >
+                  {sport}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {loading && <p className="status-message">Finding games around Sri Lanka...</p>}
@@ -160,13 +169,13 @@ function GameList({ onCreate, session, onLogin }) {
                 <div className="card-topline"><span>{game.sport}</span><span>{game.maxPlayers} spots</span></div>
                 <h3>{game.title}</h3>
                 <p className="game-detail"><span aria-hidden="true">⌖</span>{game.location}</p>
-                <p className="game-detail"><span aria-hidden="true">◷</span>{formatGameTime(game.startTime || game.time)}</p>
+                <p className="game-detail"><span aria-hidden="true">◷</span>{formatGameTime(game.startTime)}</p>
                 <EventTiming game={game} />
-                <RegisterButton
+                <JoinGameButton
                   game={game}
                   session={session}
                   onLogin={onLogin}
-                  onRegistered={() => handleRegistered(game._id)}
+                  onJoined={() => handleJoined(game._id)}
                 />
               </div>
             </article>

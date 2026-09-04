@@ -16,14 +16,11 @@ const gameSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  time: {
-    type: String
-  },
   startTime: {
     type: Date,
     required: true
   },
-  deadlineTime: {
+  endTime: {
     type: Date,
     required: true
   },
@@ -57,8 +54,8 @@ const gameSchema = new mongoose.Schema({
 });
 
 gameSchema.pre('validate', function validateEventTimes(next) {
-  if (this.startTime && this.deadlineTime && this.deadlineTime >= this.startTime) {
-    this.invalidate('deadlineTime', 'Registration deadline must be earlier than the start time.');
+  if (this.startTime && this.endTime && this.endTime <= this.startTime) {
+    this.invalidate('endTime', 'End time must be later than the start time.');
   }
   next();
 });

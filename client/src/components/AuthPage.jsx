@@ -3,6 +3,20 @@ import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+function PasswordField({ name, label, value, onChange, visible, onToggle, autoComplete, error }) {
+  return (
+    <label>{label}
+      <span className="password-input-wrap">
+        <input type={visible ? 'text' : 'password'} name={name} value={value} onChange={onChange} autoComplete={autoComplete} aria-invalid={Boolean(error)} aria-describedby={error ? `${name}-error` : undefined} required />
+        <button className="password-toggle" type="button" onClick={onToggle} aria-label={visible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`} title={visible ? 'Hide password' : 'Show password'}>
+          <span aria-hidden="true">{visible ? '◉' : '◌'}</span>
+        </button>
+      </span>
+      {error && <small id={`${name}-error`}>{error}</small>}
+    </label>
+  );
+}
+
 function AuthPage({ mode, onAuthenticated, onNavigate }) {
   const isRegister = mode === 'register';
   const isAdmin = mode === 'admin-login';
@@ -10,6 +24,7 @@ function AuthPage({ mode, onAuthenticated, onNavigate }) {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [visiblePasswords, setVisiblePasswords] = useState({ password: false, confirmPassword: false });
 
   function validate(values) {
     const nextErrors = {};
@@ -49,24 +64,26 @@ function AuthPage({ mode, onAuthenticated, onNavigate }) {
     } catch (requestError) {
       setFieldErrors(requestError.response?.data?.errors || {});
       setError(requestError.response?.data?.message || 'Unable to complete that request.');
+      setForm((currentForm) => ({ ...currentForm, password: '', confirmPassword: '' }));
+      setVisiblePasswords({ password: false, confirmPassword: false });
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <main className="page-shell auth-page">
+    <main className={`page-shell auth-page${isAdmin ? ' admin-auth' : ''}${isRegister ? ' register-auth' : ''}`}>
       <div className="form-intro">
         <p className="eyebrow">{isAdmin ? 'Restricted area' : isRegister ? 'Join the community' : 'Welcome back'}</p>
         <h1>{isAdmin ? 'Admin login' : isRegister ? 'Create your account' : 'Log in'}</h1>
         <p>{isAdmin ? 'Use an administrator account to manage the Sports Finder community.' : isRegister ? 'Create a username to post and manage your games.' : 'Log in to create games and keep your sports plans moving.'}</p>
       </div>
       <form className="game-form auth-form" onSubmit={handleSubmit} noValidate>
-        <label>Username<input name="username" value={form.username} onChange={handleChange} autoComplete="username" required />{fieldErrors.username && <small>{fieldErrors.username}</small>}</label>
-        <label>Password<input type="password" name="password" value={form.password} onChange={handleChange} autoComplete={isRegister ? 'new-password' : 'current-password'} required />{fieldErrors.password && <small>{fieldErrors.password}</small>}</label>
-        {isRegister && <label>Confirm password<input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} autoComplete="new-password" required />{fieldErrors.confirmPassword && <small>{fieldErrors.confirmPassword}</small>}</label>}
-        {error && <p className="form-submit-error">{error}</p>}
-        <button className="primary-button" type="submit" disabled={submitting}>{submitting ? 'Please wait...' : isRegister ? 'Create account' : 'Log in'}</button>
+        <label>Username<input name="username" value={form.username} onChange={handleChange} autoComplete="username" aria-invalid={Boolean(fieldErrors.username)} aria-describedby={fieldErrors.username ? 'username-error' : undefined} required />{fieldErrors.username && <small id="username-error">{fieldErrors.username}</small>}</label>
+        <PasswordField name="password" label="Password" value={form.password} onChange={handleChange} visible={visiblePasswords.password} onToggle={() => setVisiblePasswords((current) => ({ ...current, password: !current.password }))} autoComplete={isRegister ? 'new-password' : 'current-password'} error={fieldErrors.password} />
+        {isRegister && <PasswordField name="confirmPassword" label="Confirm password" value={form.confirmPassword} onChange={handleChange} visible={visiblePasswords.confirmPassword} onToggle={() => setVisiblePasswords((current) => ({ ...current, confirmPassword: !current.confirmPassword }))} autoComplete="new-password" error={fieldErrors.confirmPassword} />}
+        {error && <p className="form-submit-error" role="alert">{error}</p>}
+        <button className="primary-button auth-submit" type="submit" disabled={submitting} aria-busy={submitting}>{submitting && <span className="loading-spinner" aria-hidden="true" />}{submitting ? (isRegister ? 'Creating account...' : 'Logging in...') : isRegister ? 'Create account' : 'Log in'}</button>
       </form>
       {!isAdmin && <div className="auth-links">
         {!isRegister && <button type="button" onClick={() => onNavigate('register')}>Need an account? Register</button>}
