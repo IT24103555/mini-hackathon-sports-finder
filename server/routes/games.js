@@ -1,5 +1,6 @@
 import express from 'express';
 import Game from '../models/Game.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   try {
     const { title, sport, location, time, maxPlayers } = req.body;
     if (!title?.trim() || !sport || !location?.trim() || !time || maxPlayers === undefined || maxPlayers === null || maxPlayers === '') {

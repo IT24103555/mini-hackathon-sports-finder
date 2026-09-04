@@ -17,6 +17,8 @@ Sports Finder provides one simple place to discover open local games or create a
 - Create a game with a title, location, time, and maximum player count
 - Client-side and server-side validation
 - Seed sample games when the database is empty
+- Username/password registration and login with user and administrator roles
+- Administrator user management
 
 ## Technologies
 
@@ -49,9 +51,12 @@ npm install
 Create `server/.env` and set the MongoDB connection string:
 
 ```env
-MONGODB_URI=your_mongodb_connection_string
+MONGO_URI=your_mongodb_connection_string
 PORT=5000
+JWT_SECRET=replace_with_a_long_random_secret
 ```
+
+On startup, the server creates the default administrator account `admin123` with password `password123`. Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env` to override these defaults for a deployment.
 
 Start the API:
 
@@ -70,6 +75,8 @@ npm run dev
 ```
 
 The client uses `http://localhost:5000` by default. Set `VITE_API_URL` in `client/.env` when the API is deployed elsewhere.
+
+The administrator account is created on server startup using the defaults above or the optional `ADMIN_USERNAME` and `ADMIN_PASSWORD` overrides. Registration and login intentionally use only a username and password; there is no email-based account flow.
 
 ## Deployment
 

@@ -4,7 +4,7 @@ import axios from 'axios';
 const initialForm = { title: '', sport: 'Cricket', location: '', time: '', maxPlayers: '' };
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-function GameForm({ onGameAdded, onCancel }) {
+function GameForm({ token, onGameAdded, onCancel }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
@@ -36,7 +36,7 @@ function GameForm({ onGameAdded, onCancel }) {
     setSaving(true);
     setSubmitError('');
     try {
-      const { data } = await axios.post(`${apiUrl}/api/games`, { ...form, maxPlayers: Number(form.maxPlayers) });
+      const { data } = await axios.post(`${apiUrl}/api/games`, { ...form, maxPlayers: Number(form.maxPlayers) }, { headers: { Authorization: `Bearer ${token}` } });
       setForm(initialForm);
       setErrors({});
       onGameAdded(data);
