@@ -48,3 +48,82 @@ select:focus, input:focus { border-color: #1565c0; box-shadow: 0 0 0 3px rgba(21
 @media (max-width: 600px) { .navbar { flex-direction: column; align-items: stretch; text-align: center; }.nav-buttons { justify-content: center; }.page-shell { padding: 1.5rem 0; }.hero { padding: 1.5rem; display: block; }.hero-stats { margin-top: 2rem; }.section-heading { align-items: flex-start; flex-direction: column; }.filter-control { width: 100%; }.game-grid { grid-template-columns: 1fr; }.game-card { min-height: auto; }.form-intro h1 { font-size: 2.5rem; }.game-form { padding: 1.25rem; }.form-row { grid-template-columns: 1fr; gap: 1.2rem; } }
 @media (max-width: 600px) { .user-row, .moderation-row { align-items: flex-start; flex-direction: column; }.row-actions { justify-content: flex-start; width: 100%; }.row-actions .secondary-button, .row-actions .primary-button { flex: 1; } }
 .status-badge { display: block; border-color: #cad8d4; color: #8a9da5; cursor: default; }
+
+/* Keep form pages centered while preserving a comfortable mobile layout. */
+.auth-page,
+.form-page {
+	width: 100%;
+	max-width: none;
+	min-height: 85vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem 1rem 4rem;
+}
+.auth-page .form-intro,
+.form-page .form-intro {
+	width: 100%;
+	max-width: 620px;
+	text-align: center;
+	margin: 0 auto 2rem;
+}
+.auth-page .game-form,
+.form-page .game-form {
+	width: 100%;
+	max-width: 820px;
+	padding: 2rem;
+	background: #fff;
+	border: 1px solid #e3ebe7;
+	border-radius: 12px;
+	box-shadow: 0 18px 40px rgba(16, 42, 67, .12);
+}
+.auth-page .auth-form {
+	max-width: 620px;
+}
+.auth-page .auth-form,
+.form-page .game-form {
+	gap: 1.25rem;
+}
+.auth-page label,
+.form-page label {
+	gap: .55rem;
+}
+.auth-page input,
+.auth-page select,
+.form-page input,
+.form-page select {
+	min-height: 46px;
+	margin: 0;
+	padding: .65rem 1rem;
+	border-color: #d4dfdb;
+	border-radius: 6px;
+	transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.auth-page input:focus,
+.auth-page select:focus,
+.form-page input:focus,
+.form-page select:focus {
+	border-color: #1565c0;
+	background: #fff;
+	box-shadow: 0 0 0 4px rgba(21, 101, 192, .12);
+}
+.auth-page .auth-submit {
+	align-self: stretch;
+	min-height: 48px;
+}
+.auth-page .auth-links {
+	width: 100%;
+	max-width: 620px;
+}
+@media (max-width: 600px) {
+	.auth-page,
+	.form-page {
+		min-height: 85vh;
+		padding: 2rem .75rem 3rem;
+	}
+	.auth-page .game-form,
+	.form-page .game-form {
+		padding: 1.25rem;
+	}
+}
