@@ -1,6 +1,6 @@
 # Sports Finder
 
-Sports Finder is a MERN application that helps Sri Lankans find casual sports games nearby.
+Sports Finder is a MERN stack application that helps Sri Lankans find casual sports games nearby.
 
 ## Selected Problem
 
