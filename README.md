@@ -48,7 +48,7 @@ The client expects the API at `http://localhost:5000`. Change `VITE_API_URL` if 
 Deploy the two folders as separate services:
 
 - **Vercel:** Set the project root to `client`, build command to `npm run build`, output directory to `dist`, and add the build-time environment variable `VITE_API_URL=https://your-railway-service.up.railway.app`.
-- **Railway:** Set the service root directory to `server`, start command to `npm start`, and add `MONGO_URI` with your MongoDB connection string. Add `CLIENT_URL=https://your-vercel-project.vercel.app` and let Railway provide `PORT` automatically.
+- **Railway:** Set the service root directory to `server`, start command to `npm start`, and add `MONGO_URI` with your MongoDB connection string. Add `CLIENT_URL=https://mini-hackathon-sports-finder.vercel.app` and let Railway provide `PORT` automatically.
 
 After deployment, verify `https://your-railway-service.up.railway.app/api/health` returns a successful response. Redeploy the Vercel frontend after changing `VITE_API_URL`, because Vite embeds that value during the build.
 
@@ -62,7 +62,7 @@ Replace these placeholders with your team's names and specific contributions.
 
 ## Deployed Links
 
-- Frontend: `[Add deployed frontend URL]`
+- Frontend: https://mini-hackathon-sports-finder.vercel.app
 - Backend API: `[Add deployed backend URL]`
 
 ## AI Tool Declaration
