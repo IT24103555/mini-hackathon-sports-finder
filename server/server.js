@@ -13,13 +13,19 @@ const app = express();
 const port = process.env.PORT || 5000;
 const adminUsername = process.env.ADMIN_USERNAME || 'admin123';
 const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
+const eventTime = (daysFromNow, hour) => {
+  const date = new Date();
+  date.setDate(date.getDate() + daysFromNow);
+  date.setHours(hour, 0, 0, 0);
+  return date;
+};
 
 const sampleGames = [
-  { title: 'Sunday Evening Cricket', sport: 'Cricket', location: 'Colombo 7', time: '5:00 PM', maxPlayers: 11, status: 'approved' },
-  { title: 'Morning Football', sport: 'Football', location: 'Negombo Beach', time: '7:00 AM', maxPlayers: 10, status: 'approved' },
-  { title: 'Volleyball at Galle Face', sport: 'Volleyball', location: 'Galle Face', time: '4:00 PM', maxPlayers: 6, status: 'approved' },
-  { title: 'Night Cricket', sport: 'Cricket', location: 'Kandy Stadium', time: '8:00 PM', maxPlayers: 11, status: 'approved' },
-  { title: 'Weekend Football', sport: 'Football', location: 'Jaffna Ground', time: '3:00 PM', maxPlayers: 12, status: 'approved' }
+  { title: 'Sunday Evening Cricket', sport: 'Cricket', location: 'Colombo 7', time: '5:00 PM', deadlineTime: eventTime(2, 12), startTime: eventTime(3, 17), maxPlayers: 11, status: 'approved' },
+  { title: 'Morning Football', sport: 'Football', location: 'Negombo Beach', time: '7:00 AM', deadlineTime: eventTime(4, 7), startTime: eventTime(5, 7), maxPlayers: 10, status: 'approved' },
+  { title: 'Volleyball at Galle Face', sport: 'Volleyball', location: 'Galle Face', time: '4:00 PM', deadlineTime: eventTime(6, 12), startTime: eventTime(7, 16), maxPlayers: 6, status: 'approved' },
+  { title: 'Night Cricket', sport: 'Cricket', location: 'Kandy Stadium', time: '8:00 PM', deadlineTime: eventTime(8, 14), startTime: eventTime(9, 20), maxPlayers: 11, status: 'approved' },
+  { title: 'Weekend Football', sport: 'Football', location: 'Jaffna Ground', time: '3:00 PM', deadlineTime: eventTime(10, 10), startTime: eventTime(11, 15), maxPlayers: 12, status: 'approved' }
 ];
 
 app.use(cors());

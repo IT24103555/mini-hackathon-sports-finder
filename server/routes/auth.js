@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { loginSchema, registerSchema, validateRequest } from '../validation.js';
 
 const router = express.Router();
 
@@ -14,8 +15,9 @@ function publicUser(user) {
 }
 
 async function login(req, res, expectedRole) {
-  const { username, password } = req.body;
-  if (!username?.trim() || !password) return res.status(400).json({ message: 'Username and password are required.' });
+  const values = validateRequest(loginSchema, req, res);
+  if (!values) return;
+  const { username, password } = values;
 
   const user = await User.findOne({ username: username.trim() });
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
@@ -28,11 +30,9 @@ async function login(req, res, expectedRole) {
 
 router.post('/register', async (req, res) => {
   try {
-    const { username, password, confirmPassword } = req.body;
-    if (!username?.trim() || !password || !confirmPassword) return res.status(400).json({ message: 'Username, password, and confirmation are required.' });
-    if (!/^[a-zA-Z0-9_]{3,30}$/.test(username.trim())) return res.status(400).json({ message: 'Username must be 3-30 characters using letters, numbers, or underscores.' });
-    if (password.length < 8) return res.status(400).json({ message: 'Password must be at least 8 characters.' });
-    if (password !== confirmPassword) return res.status(400).json({ message: 'Passwords do not match.' });
+    const values = validateRequest(registerSchema, req, res);
+    if (!values) return;
+    const { username, password } = values;
     if (await User.exists({ username: username.trim() })) return res.status(409).json({ message: 'That username is already taken.' });
 
     const user = await User.create({ username: username.trim(), passwordHash: await bcrypt.hash(password, 12) });

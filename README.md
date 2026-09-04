@@ -14,7 +14,8 @@ Sports Finder provides one simple place to discover open local games or create a
 
 - Browse casual cricket, football, and volleyball games
 - Filter games by sport
-- Create a game with a title, location, time, and maximum player count
+- Create a game with a title, location, registration deadline, start time, and maximum player count
+- See live registration countdowns and event status on each game card
 - Client-side and server-side validation
 - Seed sample games when the database is empty
 - Moderate sports events before public listing
