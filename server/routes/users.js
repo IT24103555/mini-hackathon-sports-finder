@@ -1,6 +1,8 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import User from '../models/User.js';
 import { requireAdmin, requireAuth } from '../middleware/auth.js';
+import { roleSchema, validateRequest } from '../validation.js';
 
 const router = express.Router();
 router.use(requireAuth, requireAdmin);
@@ -11,8 +13,10 @@ router.get('/', async (req, res) => {
 });
 
 router.patch('/:id/role', async (req, res) => {
-  const { role } = req.body;
-  if (!['user', 'admin'].includes(role)) return res.status(400).json({ message: 'Role must be user or admin.' });
+  const values = validateRequest(roleSchema, req, res);
+  if (!values) return;
+  if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ message: 'User id must be valid.' });
+  const { role } = values;
 
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).json({ message: 'User not found.' });
@@ -24,6 +28,7 @@ router.patch('/:id/role', async (req, res) => {
 });
 
 router.delete('/:id', async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ message: 'User id must be valid.' });
   if (req.params.id === req.user.id) return res.status(400).json({ message: 'You cannot delete your own administrator account.' });
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).json({ message: 'User not found.' });

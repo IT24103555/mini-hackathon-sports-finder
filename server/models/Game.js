@@ -17,7 +17,14 @@ const gameSchema = new mongoose.Schema({
     trim: true
   },
   time: {
-    type: String,
+    type: String
+  },
+  startTime: {
+    type: Date,
+    required: true
+  },
+  deadlineTime: {
+    type: Date,
     required: true
   },
   maxPlayers: {
@@ -25,6 +32,10 @@ const gameSchema = new mongoose.Schema({
     required: true,
     min: 2
   },
+  registeredPlayers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -43,6 +54,13 @@ const gameSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+});
+
+gameSchema.pre('validate', function validateEventTimes(next) {
+  if (this.startTime && this.deadlineTime && this.deadlineTime >= this.startTime) {
+    this.invalidate('deadlineTime', 'Registration deadline must be earlier than the start time.');
+  }
+  next();
 });
 
 export default mongoose.model('Game', gameSchema);

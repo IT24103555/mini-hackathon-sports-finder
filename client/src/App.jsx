@@ -31,7 +31,7 @@ function App() {
     <div className="app-container">
       <Navbar setView={setView} session={session} onLogout={handleLogout} />
       <main>
-        {view === 'list' && <GameList key={refreshKey} onCreate={() => session ? setView('form') : setView('login')} />}
+        {view === 'list' && <GameList key={refreshKey} session={session} onLogin={() => setView('login')} onCreate={() => session ? setView('form') : setView('login')} />}
         {view === 'form' && session && <GameForm token={session.token} onGameAdded={handleGameAdded} onCancel={() => setView('list')} />}
         {view === 'login' && <AuthPage mode="login" onAuthenticated={handleAuthenticated} onNavigate={setView} />}
         {view === 'admin-login' && <AuthPage mode="admin-login" onAuthenticated={handleAuthenticated} onNavigate={setView} />}
