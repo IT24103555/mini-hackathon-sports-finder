@@ -9,17 +9,15 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 const sampleGames = [
-  { title: 'Saturday Turf Cricket', sport: 'Cricket', location: 'Colombo Racecourse', time: '2026-09-05T07:00:00.000Z', maxPlayers: 12 },
-  { title: 'Galle Face 5-a-side', sport: 'Football', location: 'Galle Face Green, Colombo', time: '2026-09-05T16:30:00.000Z', maxPlayers: 10 },
-  { title: 'Kandy Evening Volleyball', sport: 'Volleyball', location: 'Bogambara Grounds, Kandy', time: '2026-09-06T10:00:00.000Z', maxPlayers: 12 },
-  { title: 'Negombo Beach Cricket', sport: 'Cricket', location: 'Negombo Beach Park', time: '2026-09-06T03:30:00.000Z', maxPlayers: 14 },
-  { title: 'Rugby Grounds Football', sport: 'Football', location: 'Nawaloka Grounds, Colombo', time: '2026-09-07T11:00:00.000Z', maxPlayers: 14 },
-  { title: 'Matara Weekend Volley', sport: 'Volleyball', location: 'Matara Public Grounds', time: '2026-09-08T09:30:00.000Z', maxPlayers: 10 }
+  { title: 'Sunday Evening Cricket', sport: 'Cricket', location: 'Colombo 7', time: '5:00 PM', maxPlayers: 11 },
+  { title: 'Morning Football', sport: 'Football', location: 'Negombo Beach', time: '7:00 AM', maxPlayers: 10 },
+  { title: 'Volleyball at Galle Face', sport: 'Volleyball', location: 'Galle Face', time: '4:00 PM', maxPlayers: 6 },
+  { title: 'Night Cricket', sport: 'Cricket', location: 'Kandy Stadium', time: '8:00 PM', maxPlayers: 11 },
+  { title: 'Weekend Football', sport: 'Football', location: 'Jaffna Ground', time: '3:00 PM', maxPlayers: 12 }
 ];
 
 app.use(cors());
 app.use(express.json());
-app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 app.use('/api/games', gamesRouter);
 
 async function seedGames() {
@@ -33,8 +31,9 @@ async function seedGames() {
 async function startServer() {
   try {
     await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ MongoDB connected');
     await seedGames();
-    app.listen(port, () => console.log(`Sports Finder API running on port ${port}`));
+    app.listen(port, () => console.log(`🚀 Server on port ${port}`));
   } catch (error) {
     console.error('Could not connect to MongoDB:', error.message);
     process.exit(1);
