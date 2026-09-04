@@ -55,7 +55,7 @@ function GameForm({ onCreated, onCancel }) {
     setSaving(true);
     setSubmitError('');
     try {
-      const { data } = await axios.post(`${apiUrl}/api/games`, { ...form, title: form.title.trim(), location: form.location.trim(), maxPlayers: Number(form.maxPlayers) });
+      const { data } = await axios.post(`${apiUrl}/api/games`, { ...form, title: form.title.trim(), location: form.location.trim(), time: new Date(form.time).toISOString(), maxPlayers: Number(form.maxPlayers) });
       setForm(initialForm);
       setErrors({});
       onCreated(data);
