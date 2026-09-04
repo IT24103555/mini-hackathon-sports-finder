@@ -12,23 +12,26 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    async function loadGames() {
-      try {
-        const { data } = await axios.get(`${apiUrl}/api/games`);
-        setGames(data);
-      } catch {
-        setError('Games are taking a breather. Check that the backend is running and try again.');
-      } finally {
-        setLoading(false);
-      }
+  async function loadGames() {
+    setLoading(true);
+    setError('');
+    try {
+      const { data } = await axios.get(`${apiUrl}/api/games`);
+      setGames(data);
+    } catch {
+      setError('Games are taking a breather. Check that the backend is running and try again.');
+    } finally {
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
     loadGames();
   }, []);
 
-  function handleCreated(game) {
-    setGames((currentGames) => [...currentGames, game].sort((first, second) => new Date(first.time) - new Date(second.time)));
+  async function handleCreated() {
     setView('list');
+    await loadGames();
   }
 
   return (

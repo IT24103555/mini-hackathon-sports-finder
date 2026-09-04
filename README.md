@@ -2,6 +2,28 @@
 
 Sports Finder is a simple MERN web application for helping people in Sri Lanka discover casual cricket, football, and volleyball games nearby.
 
+## Selected Problem
+
+People who want to play casual sports often struggle to find nearby games and enough players without relying on scattered social media groups.
+
+## Proposed Solution
+
+Sports Finder gives local players one simple place to discover open games or create an invitation for their area.
+
+## Main Features
+
+- Browse casual games in Sri Lanka
+- Filter games by cricket, football, or volleyball
+- Create a game with title, location, time, and player limit
+- Friendly client-side and server-side validation
+- Sample games seeded automatically for a new database
+
+## Technologies Used
+
+- MongoDB and Mongoose
+- Node.js, Express, CORS, and dotenv
+- React, Vite, and Axios
+
 ## Project Structure
 
 - `server/` - Express API, Mongoose model, routes, and seed data
@@ -50,6 +72,10 @@ The client expects the API at `http://localhost:5000`. Change `VITE_API_URL` if 
 - Member 3: Testing, documentation, and deployment
 
 Replace these placeholders with your team's names and specific contributions.
+
+## Demonstration Video
+
+`[Add demonstration video URL]`
 
 ## Deployed Links
 

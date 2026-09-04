@@ -22,7 +22,7 @@ function GameForm({ onCreated, onCancel }) {
     if (!form.location.trim()) nextErrors.location = 'Add where you will play.';
     if (!form.time) nextErrors.time = 'Choose a date and time.';
     if (!form.maxPlayers) nextErrors.maxPlayers = 'Tell players how many spots are available.';
-    else if (!Number.isInteger(Number(form.maxPlayers)) || Number(form.maxPlayers) <= 0) nextErrors.maxPlayers = 'Enter a whole number greater than zero.';
+    else if (!Number.isInteger(Number(form.maxPlayers)) || Number(form.maxPlayers) < 2) nextErrors.maxPlayers = 'Enter a whole number of at least 2 players.';
     return nextErrors;
   }
 
@@ -37,6 +37,8 @@ function GameForm({ onCreated, onCancel }) {
     setSubmitError('');
     try {
       const { data } = await axios.post(`${apiUrl}/api/games`, { ...form, maxPlayers: Number(form.maxPlayers) });
+      setForm(initialForm);
+      setErrors({});
       onCreated(data);
     } catch (error) {
       setSubmitError(error.response?.data?.message || 'We could not post your game. Please try again.');
@@ -60,7 +62,7 @@ function GameForm({ onCreated, onCancel }) {
         <label>Location<input name="location" value={form.location} onChange={handleChange} placeholder="e.g. Viharamahadevi Park, Colombo" />{errors.location && <small>{errors.location}</small>}</label>
         <div className="form-row">
           <label>Date and time<input type="datetime-local" name="time" value={form.time} onChange={handleChange} />{errors.time && <small>{errors.time}</small>}</label>
-          <label>Maximum players<input type="number" name="maxPlayers" value={form.maxPlayers} onChange={handleChange} min="1" placeholder="10" />{errors.maxPlayers && <small>{errors.maxPlayers}</small>}</label>
+          <label>Maximum players<input type="number" name="maxPlayers" value={form.maxPlayers} onChange={handleChange} min="2" placeholder="10" />{errors.maxPlayers && <small>{errors.maxPlayers}</small>}</label>
         </div>
         {submitError && <p className="form-submit-error">{submitError}</p>}
         <div className="form-actions"><button type="button" className="secondary-button" onClick={onCancel}>Cancel</button><button type="submit" className="primary-button" disabled={saving}>{saving ? 'Posting...' : 'Post game ↗'}</button></div>

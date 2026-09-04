@@ -17,13 +17,13 @@ const gameSchema = new mongoose.Schema({
     trim: true
   },
   time: {
-    type: Date,
+    type: String,
     required: true
   },
   maxPlayers: {
     type: Number,
     required: true,
-    min: 1
+    min: 2
   }
 }, {
   timestamps: { createdAt: true, updatedAt: false }

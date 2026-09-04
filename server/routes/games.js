@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const games = await Game.find().sort({ time: 1 });
+    const games = await Game.find().sort({ createdAt: -1 });
     res.json(games);
   } catch (error) {
     res.status(500).json({ message: 'Unable to load games right now.' });
