@@ -43,6 +43,15 @@ Sports Finder is a simple MERN web application for helping people in Sri Lanka d
 
 The client expects the API at `http://localhost:5000`. Change `VITE_API_URL` if your backend uses another address.
 
+## Deployment
+
+Deploy the two folders as separate services:
+
+- **Vercel:** Set the project root to `client`, build command to `npm run build`, output directory to `dist`, and add the build-time environment variable `VITE_API_URL=https://your-railway-service.up.railway.app`.
+- **Railway:** Set the service root directory to `server`, start command to `npm start`, and add `MONGO_URI` with your MongoDB connection string. Add `CLIENT_URL=https://your-vercel-project.vercel.app` and let Railway provide `PORT` automatically.
+
+After deployment, verify `https://your-railway-service.up.railway.app/api/health` returns a successful response. Redeploy the Vercel frontend after changing `VITE_API_URL`, because Vite embeds that value during the build.
+
 ## Team Contributions
 
 - Member 1: Backend API, database model, and seed data

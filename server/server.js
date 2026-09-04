@@ -17,7 +17,8 @@ const sampleGames = [
   { title: 'Matara Weekend Volley', sport: 'Volleyball', location: 'Matara Public Grounds', time: '2026-09-08T09:30:00.000Z', maxPlayers: 10 }
 ];
 
-app.use(cors());
+const allowedOrigin = process.env.CLIENT_URL;
+app.use(cors({ origin: allowedOrigin || true }));
 app.use(express.json());
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 app.use('/api/games', gamesRouter);
